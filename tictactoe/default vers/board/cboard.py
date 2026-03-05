@@ -54,8 +54,6 @@ class Board:
                 square=self.board[row][col]
 
                 if isinstance(square,Board): square.render_ultimate(screen)
-
-        #self.draw_lines() # draws original board lines
         if self.ultimate:
             self.linewidth=LINE_WIDTH
         else:
@@ -80,12 +78,12 @@ class Board:
         row=(y-self.dims.y)//self.dims.squaresize
         col=(x-self.dims.x)//self.dims.squaresize
 
-        if (row<0 or row>=3) or (col<0 or col>=3): # validation
+        if (row<0 or row>=3) or (col<0 or col>=3): # row/col validation
             return False
-        square=self.board[row][col]
+        square=self.board[row][col] # smaller board
 
         if self.ultimate:
-            if (row,col)!=self.next_board and self.next_board!=None:
+            if (row,col)!=self.next_board and self.next_board!=None: # next board restriction
                 return False
 
         #if 3x3 board
@@ -95,22 +93,15 @@ class Board:
         #if ultimate board - recursion
         ultx=x-self.dims.x # x/y coordinates for smaller board in larger board
         ulty=y-self.dims.y
-        return square.ultvalidate(ultx,ulty) #recursive- validate piece within smaller board
-    
-
-    #if row>2:
-    #        row= row%BOARD_ROWS #mod ensures main row/col stay between 0,1,2
-    #    if col>2:
-    #        col= col%BOARD_COLUMNS
-        
+        return square.ultvalidate(ultx,ulty) #recursive- validate piece within smaller board      
           
     def marksquare(self,x,y,player): # ult cell_button_clicked() method
         row=(y-self.dims.y)//self.dims.squaresize
         col=(x-self.dims.x)//self.dims.squaresize
         
-        if (row<0 or row>=3) or (col<0 or col>=3): # validation
+        if (row<0 or row>=3) or (col<0 or col>=3): # row/col validation
             return False 
-        square=self.board[row][col]
+        square=self.board[row][col] # smaller board
 
 
         if self.ultimate and self.next_board!=None: # next board has been updated
@@ -122,14 +113,8 @@ class Board:
                         return False
                 else:
                     return False # trying to place piece on a won board
-            
                 
-        '''if self.ultimate and self.next_board!=None: # next board has been updated
-            if (row,col)!=self.next_board: #small board which != next board
-                if isinstance(square,Board) and square.markedsquares<9 and square.final_state()==0: # board is still active, no win/draw detected
-                    return False'''
-                
-        if isinstance(square,Board):       
+        if isinstance(square,Board):      
             ultx=x-square.dims.x # x/y coordinates for smaller board in larger board
             ulty=y-square.dims.y
 
@@ -314,3 +299,4 @@ class Board:
 #board.reset()
 
 #board.run()
+
