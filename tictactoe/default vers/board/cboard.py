@@ -142,7 +142,7 @@ class Board:
 
     def update_nextboard(self,row,col): #row,col for smaller board - method updates next board attribute
         #sets coordinates of next board equal to square that has just been marked
-        if (row<0 or row>=3) or (col<0 or col>=3): # validation
+        if (row<0 or row>=3) or (col<0 or col>=3): # row/col validation
             self.next_board=None
             return
         square=self.board[row][col]
@@ -150,7 +150,7 @@ class Board:
             if square.markedsquares==9 or square.final_state()!=0: # draw/win detected, board is inactive, next player can go anywhere
                 self.next_board=None
             else:
-                self.next_board=(row,col)
+                self.next_board=(row,col) # board is active, user is resatricted to that board
         else:
             self.next_board=None
 
@@ -159,19 +159,20 @@ class Board:
         for row in range(BOARD_ROWS):
             for col in range(BOARD_COLUMNS):
                 square=self.board[row][col]
-                if isinstance(square, Board):
+                if isinstance(square, Board): # square is smaller board
                     square.place_ultpiece(piece1,piece2)
                 else:
                     if square==1:
-                    #pygame.draw.circle(self.board.screen,PIECE1_COLOUR,(int(col*200+200/2),int(row*200+200/2)),CIRC_RADIUS,CIRC_WIDTH)
                         piece1.draw_symbol(self.screen,row,col,self.dims.squaresize,self.dims.x,self.dims.y)
                     elif square==2:
                         piece2.draw_symbol(self.screen,row,col,self.dims.squaresize,self.dims.x,self.dims.y)
 
     def ult_final_state(self):
+        #3x3
         if not self.ultimate:
             return self.final_state() #3x3 board
-        
+
+        #ultimate
         for row in range(BOARD_ROWS):
             for col in range(BOARD_COLUMNS):
                 square=self.board[row][col]
@@ -181,9 +182,9 @@ class Board:
                         self.board[row][col]=win # replaces board with winning player num
                         return "small board"
 
-                self.final_state()       
+                self.final_state() # if in smaller board
 
-    def ult_emptysquares(self):
+    def ult_emptysquares(self): # returns list of all valid smaller board squares
         valid_moves=[]
         for row in range(BOARD_ROWS):
             for col in range(BOARD_COLUMNS):
@@ -192,7 +193,7 @@ class Board:
                     if self.next_board==None or self.next_board==(row,col): # board restriction
                         if square.markedsquares<9 and square.final_state()==0: #board is still active
                             for srow in range(BOARD_ROWS):
-                                for scol in range(BOARD_COLUMNS):
+                                for scol in range(BOARD_COLUMNS): # squares in valid smaller board/s
                                     if square.board[srow][scol]==0:
                                         x=square.dims.x+scol*square.dims.squaresize+square.dims.squaresize//2
                                         y=square.dims.y+srow*square.dims.squaresize+square.dims.squaresize//2
@@ -234,29 +235,27 @@ class Board:
         return 0
 
     def copy(self):
-        #temp_board=Board()
         temp_board= Board.__new__(Board)
         temp_board.board=copy.deepcopy(self.board)
         temp_board.markedsquares=self.markedsquares
         return temp_board
 
-#temp_board.markedsquares=self.markedsquares
     def validate_input(self,row,col): #checks if where user is placing their piece is available
         if self.board[row][col]==0:
             return True
         return False
     
-    def check_full(self):
+    def check_full(self): # checks board is full, all square have been marked
         for row in range(BOARD_ROWS):
             for col in range(BOARD_COLUMNS):
                 if self.board[row][col]==0:
                     return False
         return True
     
-    def check_empty(self,row,col):
+    def check_empty(self,row,col): # returns true if a square in board is empty
         return self.board[row][col]==0
     
-    def getemptysquares(self):
+    def getemptysquares(self): # returns list of valid empty squares
         emptysqrs=[]
         for row in range(BOARD_ROWS):
             for col in range(BOARD_COLUMNS):
@@ -266,31 +265,16 @@ class Board:
         return emptysqrs
     
 
-    def reset(self):
+    def reset(self): # reset all values in console board back to 0
        for row in range(BOARD_ROWS):
             for col in range(BOARD_COLUMNS):
                 self.board[row][col]=0
        self.markedsquares=0
-                
-
 
 #MAIN METHODS FOR DISPLAYING GAME
     def display_window(self):
         pygame.display.update()
 
-    
 
-#main
-#board=Board()
-#board.create_window()
-
-#TESTS
-#board.cell_button_clicked(0,0,1)
-#board.cell_button_clicked(0,2,2)
-
-#print(board.validate_input(0,0))
-#board.reset()
-
-#board.run()
 
 
