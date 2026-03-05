@@ -140,8 +140,7 @@ class Board:
             return False
         
 
-    def update_nextboard(self,row,col):
-        #row,col for smaller board - method updates next board attribute
+    def update_nextboard(self,row,col): #row,col for smaller board - method updates next board attribute
         #sets coordinates of next board equal to square that has just been marked
         if (row<0 or row>=3) or (col<0 or col>=3): # validation
             self.next_board=None
@@ -154,7 +153,6 @@ class Board:
                 self.next_board=(row,col)
         else:
             self.next_board=None
-        #print(self.next_board)
 
 
     def place_ultpiece(self,piece1,piece2):
@@ -199,15 +197,13 @@ class Board:
                                         x=square.dims.x+scol*square.dims.squaresize+square.dims.squaresize//2
                                         y=square.dims.y+srow*square.dims.squaresize+square.dims.squaresize//2
                                         valid_moves.append((x,y))
-        #print(valid_moves)
+        
         return valid_moves
     
 #BOARD FUNCTIONALITY METHODS
     def cell_button_clicked(self, row, col, player): #placing a piece, recording it on console board
-        #print(self.board)
         self.board[row][col]=player # allows specified player to place their piece where they choose
-        #print(self.board)
-        self.markedsquares+=1 # helps 
+        self.markedsquares+=1
 
 
 
@@ -236,7 +232,6 @@ class Board:
             return self.board[0][0]
         
         return 0
-        # write selection method for final state then try again
 
     def copy(self):
         #temp_board=Board()
@@ -257,8 +252,6 @@ class Board:
                 if self.board[row][col]==0:
                     return False
         return True
-        #if self.markedsquares==BOARD_ROWS*BOARD_COLUMNS:
-        #    return True
     
     def check_empty(self,row,col):
         return self.board[row][col]==0
@@ -299,4 +292,5 @@ class Board:
 #board.reset()
 
 #board.run()
+
 
