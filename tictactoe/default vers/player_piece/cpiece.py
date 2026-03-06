@@ -7,9 +7,6 @@ class Piece:
     def __init__(self,symbol,colour):
         self.symbol=symbol # symbol displayed on board, will be a string printed to the board
         self.colour=colour # colour of the symbol
-        #self.dims=dims
-        #self.size=PIECE_SIZE # constant used to fix piece's size on board
-        #self.font=pygame.font.SysFont("segoeui",self.size) # setting font for piece which is text
 
     def draw_symbol(self,screen,row,col,cell_size,ultx,ulty): # draws symbol to screen board 
         #ultx, ulty helps with finding coordinates for squares in ultimate
@@ -18,9 +15,8 @@ class Piece:
         self.font=pygame.font.SysFont("segoeui",self.size) # setting font for piece which is text
 
         self.text=self.font.render(self.symbol,True,self.colour)
-        vertical_offset=int(self.size*0.08) # shifting all pieces up by a certain value, centres piece
+        vertical_offset=int(self.size*0.08) # shifting all pieces by a certain value, centres piece
         horizontal_offset=int(self.size*0.014)
-        #self.rect=self.text.get_rect(center=(col*cell_size+cell_size//2,row*cell_size+cell_size//2))
         
         x = ultx+ col * cell_size + cell_size // 2
         y = ulty+ row * cell_size + cell_size // 2 # x and y coords for cell centre
@@ -36,4 +32,5 @@ class Piece:
         text=self.font.render(self.symbol,True,self.colour)
         rect=text.get_rect(center=(x,y)) #center freely decided by x,y coords
         screen.blit(text,rect)
+
 
