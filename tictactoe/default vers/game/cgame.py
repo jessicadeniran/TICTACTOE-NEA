@@ -15,16 +15,9 @@ from ui.buttons import Buttons
 class Game:
     def __init__(self):
         self.player=1 # current player is set to 1. this alternates through the switch turn method for players 1 and 2
-        #self.board=Board() # the board object
 
         self.dims=Dimensions(WIDTH,0,0)
         self.board=Board(dims=self.dims,ultimate=False)
-
-        #self.tboard=Board(dims=dims,ultimate=True)
-        #self.board.screen=screen
-        #self.piece1=Piece("x",PIECE1_COLOUR)
-        #self.piece2=Piece("o",PIECE2_COLOUR)
-        #p2=Player(2)
         self.piece_set="default"
         sym1,sym2=PIECE_SET[self.piece_set]
         self.piece1=Player(1).assign_player(sym1,PIECE1_COLOUR)
@@ -76,19 +69,6 @@ class Game:
         self.winsound=pygame.mixer.Sound("game/win sfx.mp3") # wins in sp + mp
         self.losesound=pygame.mixer.Sound("game/lose sfx.mp3") # p1 loss in sp
         self.neutral=pygame.mixer.Sound("game/neutral sfx.mp3") # draws
-
-
-        #menu
-        #self.menu=Menu(self.board.screen)
-        #self.menumode=True
-    '''
-        self.font=pygame.font.SysFont("arialblack",40)
-    
-    def draw_text(text,font,text_colour,x,y):
-        img=font.render(text,True,text_colour)
-        self.board.screen.blit(img,x,y)
-
-        '''
     
     #extras
     def play_music(self):
@@ -128,35 +108,28 @@ class Game:
                     self.piece1.draw_symbol(self.board.screen,row,col,201,0,0)
                 elif self.board.board[row][col]==2:
                     self.piece2.draw_symbol(self.board.screen,row,col,201,0,0)
-
-                    #pygame.draw.line(self.board.screen,PIECE2_COLOUR,(col*200+SPACE,row*200+200-SPACE),(col*200+200-SPACE,row*200+SPACE),CROSS_WIDTH)
-                    #pygame.draw.line(self.board.screen,PIECE2_COLOUR,(col*200+SPACE,row*200+SPACE),(col*200+200-SPACE,row*200+200-SPACE),CROSS_WIDTH)
     
     def check_win(self,player):
         #vertical win check
             for col in range(BOARD_COLUMNS):
                 if self.board.board[0][col]==player and self.board.board[1][col]==player and self.board.board[2][col]==player:
-                    #self.draw_vertical_wl(col,player)
                     self.winline= ("vertical", col, player)
                     return True
             
         #horizontal win check
             for row in range(BOARD_ROWS):
                 if self.board.board[row][0]==player and self.board.board[row][1]==player and self.board.board[row][2]==player:
-                    #self.draw_horizontal_wl(row,player)
                     self.winline= ("horizontal", row, player)
                     return True
             
         #ascending diagonal win check
             if self.board.board[2][0]==player and self.board.board[1][1]==player and self.board.board[0][2]==player:
-                #self.draw_asc_wl(player)
                 self.winline= ("asc", None, player)
                 return True
 
 
         #descending diagonal win check
             if self.board.board[0][0]==player and self.board.board[1][1]==player and self.board.board[2][2]==player:
-                #self.draw_des_wl(player)
                 self.winline= ("desc", None, player)
                 return True
         
@@ -209,7 +182,7 @@ class Game:
             
         pygame.draw.line(self.board.screen,self.colour,(10,10),(WIDTH-10,HEIGHT-10),15)
         
-    def restart(self):
+    def restart(self): # resets whole game state
         pygame.display.set_caption("Play")
         self.board.screen.fill(BG_COLOUR)
         self.board.draw_lines()
@@ -220,7 +193,7 @@ class Game:
         self.aiplayer.firstmove=False
         pygame.mixer.stop()
 
-    def ult_restart(self):
+    def ult_restart(self): # reset for ultimate
         pygame.display.set_caption("Play")
         dims=Dimensions(WIDTH,0,0)
         self.board=Board(dims=dims,ultimate=True)
@@ -234,7 +207,6 @@ class Game:
     def pieces(self):
         self.board.screen.fill((0,0,0))
         while True:
-            #self.piece1.draw_symbol(self.board.screen,self.dims.x,self.dims.y,self.dims.size,0,0)
             self.piece1.draw_tie(self.board.screen,150,280,self.dims.size)
             self.piece2.draw_tie(self.board.screen,450,280,self.dims.size)
             self.board.display_window()
@@ -259,14 +231,14 @@ class Game:
                     self.piece2.draw_symbol(self.board.screen,self.dims.x,self.dims.y,self.dims.size,0,0)
 
             if self.board.markedsquares==9 and self.winline==None:
-                # draw two pieces next to each othe
+                # draw two pieces next to each other
                 winner=0
                 self.piece1.draw_tie(self.board.screen,150,280,self.dims.size)
                 self.piece2.draw_tie(self.board.screen,450,280,self.dims.size)
         
 
             #win text
-            font=pygame.font.SysFont("arialblack",50)#,bold=True)
+            font=pygame.font.SysFont("arialblack",50)
             if winner!=0:
                 win_text=(f"PLAYER {winner} HAS WON!")
             else:
@@ -284,15 +256,8 @@ class Game:
             ins_rect=ins_object.get_rect(center=(301,500))
             self.board.screen.blit(ins_object,ins_rect)
 
-            
 
-        #int(1.4*self.dims.size)
-        #while True:
-
-        #self.board.display_window()
-            
-
-    def game_mode(self):
+    def game_mode(self): #gamemode screen
         pygame.display.set_caption("Choose your Gamemode")
         if self.light:
             bg_image=pygame.image.load("game/light bg.jpg")
@@ -300,51 +265,45 @@ class Game:
             bg_image=pygame.image.load("game/bg.jpg")
         self.play_music()
         while True:
-            self.board.screen.blit(bg_image,(0,0))
-            #self.board.screen.fill(BG_COLOUR)
-            mode_mouse_pos=pygame.mouse.get_pos()
+            self.board.screen.blit(bg_image,(0,0)) #display backgorund imag3e
+            mode_mouse_pos=pygame.mouse.get_pos()# used to test if a button is being hovered over/clicked
 
             btn_surface=pygame.image.load("game/button.png")
             btn_surface=pygame.transform.scale(btn_surface,(397,110))
+            
             single=Buttons(image=btn_surface,position=(301,310),text="SINGLEPLAYER",colour="white")
             multi=Buttons(image=btn_surface,position=(301,510),text="MULTIPLAYER",colour="white")
             back=Buttons(image=btn_surface,position=(301,110),text="BACK",colour="white")
-            #back.change_colour(mode_mouse_pos)
-            #back.draw_button(self.board.screen)
-           
+            
+           # draw buttons onto screen
             for button in [single,multi,back]:
                 button.change_colour(mode_mouse_pos)
                 button.draw_button(self.board.screen)
-            
-           # settings_back.change_colour(settings_mouse_pos)
-           # settings_back.draw_button(self.board.screen)
 
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     sys.exit()
-                if event.type==pygame.MOUSEBUTTONDOWN:
-                    if single.button_clicked(mode_mouse_pos):
+                if event.type==pygame.MOUSEBUTTONDOWN: # actions taken if buttons are clicked
+                    if single.button_clicked(mode_mouse_pos): # takes user to single page
                         if self.sfx_on:
                             self.gameclick.play()
                         self.gamemode="ai"
                         self.difficulty() 
-                    if multi.button_clicked(mode_mouse_pos):
+                    if multi.button_clicked(mode_mouse_pos): # takes user to multi page
                         if self.sfx_on:
                             self.gameclick.play()
                         self.gamemode="pvp"
                         self.multiplayer()
-                    if back.button_clicked(mode_mouse_pos):
+                    if back.button_clicked(mode_mouse_pos): # takes user back to menu
                         if self.sfx_on:
                             self.click.play()
                         self.main_menu()
 
-               # for button in [single,multi]:
-                #    if button.button_clicked(mode_mouse_pos):
 
             
-            self.board.display_window()
+            self.board.display_window() # display page
 
-    def settings(self):
+    def settings(self): #settings page
         pygame.display.set_caption("Settings")
         self.play_music()
         while True:
@@ -352,12 +311,12 @@ class Game:
                 bg_image=pygame.image.load("game/light settings.jpg")
             else:
                 bg_image=pygame.image.load("game/settings.jpg")
-            self.board.screen.blit(bg_image,(0,0)) # display tutorial page image
-            settings_mouse_pos=pygame.mouse.get_pos()
+            self.board.screen.blit(bg_image,(0,0)) # display settings page image
+            settings_mouse_pos=pygame.mouse.get_pos()# used to test if a button is being hovered over/clicked
 
             btn_surface=pygame.image.load("game/button.png")
             btn_surface=pygame.transform.scale(btn_surface,(193,55))
-            settings_back=Buttons(image=btn_surface,position=(502,570),text="BACK",colour="white")
+            settings_back=Buttons(image=btn_surface,position=(502,570),text="BACK",colour="white") #creating buttons
             
 
             #piece buttons
@@ -399,11 +358,12 @@ class Game:
                 scolour="red"
                 son_text="OFF"
 
-
+            #toggle settings buttons
             light_dark=Buttons(image=btn_surface,position=(500,300),text=light_dark_text,colour=colour)
             music=Buttons(image=btn_surface,position=(500,380),text=on_text,colour=mcolour)
             sound=Buttons(image=btn_surface,position=(500,460),text=son_text,colour=scolour)
 
+            #drawing buttons
             for button in [light_dark,music,sound,opt1,opt2,opt3]:
                 button.draw_button(self.board.screen)
 
@@ -413,11 +373,7 @@ class Game:
 
 
             settings_back.change_colour(settings_mouse_pos)
-            settings_back.draw_button(self.board.screen)
-
-            #highlight piece button
-            
-            
+            settings_back.draw_button(self.board.screen)            
 
             #toggle buttonsS
                 # light/dark
@@ -426,7 +382,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     sys.exit()
-                if event.type==pygame.MOUSEBUTTONDOWN:
+                if event.type==pygame.MOUSEBUTTONDOWN: # if buttons are clicked on
                     if settings_back.button_clicked(settings_mouse_pos):
                         if self.sfx_on:
                             self.click.play()
@@ -454,11 +410,9 @@ class Game:
                     for button in [light_dark,music,sound,opt1,opt2,opt3]:
                         if button.button_clicked(settings_mouse_pos) and self.sfx_on:
                             self.click.play()
+       
 
-                    #print(self.piece_set)
-        
-
-            #highlight button
+            #highlight piece button
             pieces_dict={
                 "default":opt1,
                 "option2":opt2,
@@ -470,12 +424,12 @@ class Game:
                 if button==selected_set:
                     x,y=button.rect.center
                     vert_offset=1.6
-                    pygame.draw.circle(self.board.screen,"purple",(x,int(y+vert_offset)),38,5)
+                    pygame.draw.circle(self.board.screen,"purple",(x,int(y+vert_offset)),38,5) # draw circle around chosen piece set
             self.board.display_window()
 
     
 
-    def difficulty(self):
+    def difficulty(self): # difficulty page
         pygame.display.set_caption("Choose your Difficulty")
         if self.light:
             bg_image=pygame.image.load("game/light bg.jpg")
@@ -483,19 +437,18 @@ class Game:
             bg_image=pygame.image.load("game/bg.jpg")
         self.play_music()
         while True:
-            self.board.screen.blit(bg_image,(0,0))
-            #self.board.screen.fill(BG_COLOUR)
-            diff_mouse_pos=pygame.mouse.get_pos()
+            self.board.screen.blit(bg_image,(0,0)) # display bg
+            diff_mouse_pos=pygame.mouse.get_pos()# used to test if a button is being hovered over/clicked
 
             btn_surface=pygame.image.load("game/button.png")
             btn_surface=pygame.transform.scale(btn_surface,(290,94))
+            #creating buttons
             easy=Buttons(image=btn_surface,position=(301,270),text="EASY",colour="white")           
             medium=Buttons(image=btn_surface,position=(301,390),text="MEDIUM",colour="white")            
             ultimate=Buttons(image=btn_surface,position=(301,510),text="ULTIMATE",colour="white")
             back=Buttons(image=btn_surface,position=(301,110),text="BACK",colour="white")
-           # back.change_colour(diff_mouse_pos)
-           # back.draw_button(self.board.screen)
 
+            # drawing buttons
             for button in [easy,medium,ultimate,back]:
                 button.change_colour(diff_mouse_pos)
                 button.draw_button(self.board.screen)
@@ -504,7 +457,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     sys.exit()
-                if event.type==pygame.MOUSEBUTTONDOWN:
+                if event.type==pygame.MOUSEBUTTONDOWN: # buttons being clicked
                     if easy.button_clicked(diff_mouse_pos):
                         if self.sfx_on:
                             self.gameclick.play()
@@ -516,7 +469,6 @@ class Game:
                         self.aiplayer.difficulty=2
                         self.play_game()
                     if ultimate.button_clicked(diff_mouse_pos):
-                        #self.board=Board(dims=self.dims,ultimate=True)
                         if self.sfx_on:
                             self.gameclick.play()
                         self.running()
@@ -526,13 +478,9 @@ class Game:
                         self.gamemode=None
                         self.game_mode()
 
-                    #for button in [easy,medium,ultimate]:
-                   #     if button.button_clicked(diff_mouse_pos) and self.sfx_on:
-                   #         self.gameclick.play()
-
             self.board.display_window()
 
-    def multiplayer(self):
+    def multiplayer(self): # multiplayer page
         pygame.display.set_caption("Choose Standard or Ultimate")
         if self.light:
             bg_image=pygame.image.load("game/light bg.jpg")
@@ -557,13 +505,12 @@ class Game:
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     sys.exit()
-                if event.type==pygame.MOUSEBUTTONDOWN:
+                if event.type==pygame.MOUSEBUTTONDOWN: # button clicked on
                     if sta.button_clicked(mult_mouse_pos):
                         if self.sfx_on:
                             self.gameclick.play()
                         self.play_game() # standard button - 3x3 pvp
                     if ult.button_clicked(mult_mouse_pos):
-                        #self.board=Board(dims=self.dims,ultimate=True)
                         if self.sfx_on:
                             self.gameclick.play()
                         self.running() # ultimate button - ult board pvp
@@ -572,27 +519,24 @@ class Game:
                             self.click.play()
                         self.gamemode=None 
                         self.game_mode() # previous page
-
-                    #for button in [sta,ult]:
-                    #    if button.button_clicked(mult_mouse_pos):
-                    #        self.gameclick.play()
             
             self.board.display_window()
 
 
-    def play_game(self):
+    def play_game(self): # actual 3x3 game page
         pygame.display.set_caption("Play")
         self.stop_music()
         while True:
-            self.board.screen.fill(BG_COLOUR)
-            self.board.draw_lines()
-            self.place_piece()
-            self.draw_winning()
-            self.win_page()
+            self.board.screen.fill(BG_COLOUR) # fill with bg colour 
+            self.board.draw_lines() # draw grid lines
+            self.place_piece() # allow piece placements to be drawn
+            self.draw_winning() # draw winning line if win detected
+            self.win_page() # go to win page if end state detected
 
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     sys.exit()
+                    
                 # game
                 if event.type==pygame.MOUSEBUTTONDOWN and not self.game_over: #if the user clicks their screen
                     self.mouseX=event.pos[0] #x coordinate
@@ -603,54 +547,51 @@ class Game:
                         self.board.cell_button_clicked(self.clicked_row,self.clicked_col,self.player)
                         if self.sfx_on:
                             self.piececlick.play()
-                        #self.check_win(self.player)
                         
-                        if self.check_win(self.player):
+                        if self.check_win(self.player): # if win detected
                             self.game_over=True
-                            self.win_page_sfx(self.player)
+                            self.win_page_sfx(self.player) 
 
+                            #update multiplayer stats
                             if self.gamemode!="ai":
                                 if self.player==1:
                                     self.p1wins+=1
                                 if self.player==2:
                                     self.p2wins+=1
 
+                            #update singleplayer stats
                             if self.gamemode=="ai":
                                 if self.player==1:
                                     self.wins+=1
                                 if self.player==self.aiplayer.player:
                                     self.losses+=1
                                     
-                        if self.game_over or self.board.markedsquares==9:
+                        if self.game_over or self.board.markedsquares==9: # if any end state (win/draw/loss) detected
                             self.total+=1
                             self.win_page_sfx(self.player)
-
-                            #print("pvp: ",self.total,self.p1wins,self.p2wins)
-                            print("sp: ",self.total,self.wins,self.losses)
 
                         if self.game_over==False:
                             self.switch_turns()
                         
-                            
 
                 if event.type==pygame.KEYDOWN: # reset board when key is clicked
                     if event.key==pygame.K_r: # key r clicked- reset
                         self.restart()
 
 
-                    if event.key==pygame.K_b: # key b clicked- back
+                    if event.key==pygame.K_b: # key b clicked- back to prvious page from game
                         if self.gamemode=="pvp":
-                                if self.winline!=None or self.board.markedsquares==9:
+                                if self.winline!=None or self.board.markedsquares==9: # end state detected
                                     self.restart()
                                 self.multiplayer()
                                 self.gamemode=None
                                 
                         if self.gamemode=="ai" and (self.aiplayer.difficulty==0 or self.aiplayer.difficulty==2):
-                                if self.winline!=None or self.board.markedsquares==9:
+                                if self.winline!=None or self.board.markedsquares==9: # end state detected
                                     self.restart()
                                 self.difficulty()
                                 
-                    if event.key==pygame.K_h:
+                    if event.key==pygame.K_h: # home button
                         if self.winline!=None or self.board.markedsquares==9:
                             self.restart()
                             self.main_menu()
@@ -668,7 +609,7 @@ class Game:
                             self.board.cell_button_clicked(row,col,self.player)
                             if self.sfx_on:
                                 self.piececlick.play()
-                            if self.check_win(self.player):
+                            if self.check_win(self.player): # win detected
                                 self.game_over=True
                                 self.win_page_sfx(self.player)
                                 if self.player==2:
@@ -683,13 +624,10 @@ class Game:
                         
                         self.aithinking=False # set back to false after ai has made their move
 
-            
-                
-            #print("sp: ",self.total,self.wins,self.losses)
             self.board.display_window()
     
     
-    def tutorial(self):
+    def tutorial(self): # tutorial page
         pygame.display.set_caption("Tutorial")
         if self.light:
             bg_image=pygame.image.load("game/light tutorial.jpg")
@@ -710,14 +648,14 @@ class Game:
                 if event.type==pygame.QUIT:
                     sys.exit()
                 if event.type==pygame.MOUSEBUTTONDOWN:
-                    if tut_back.button_clicked(tut_mouse_pos):
+                    if tut_back.button_clicked(tut_mouse_pos): # back button
                         if self.sfx_on:
                             self.click.play()
                         self.main_menu()
 
             self.board.display_window()
 
-    def main_menu(self):
+    def main_menu(self): # main menu/home page
         pygame.display.set_caption("AI TicTacToe Game! 💜")
         if self.light:
             bg_image=pygame.image.load("game/light background.jpg")
@@ -730,6 +668,7 @@ class Game:
             mouse_pos=pygame.mouse.get_pos() # used to test if a button is being hovered over/clicked
             btn_surface=pygame.image.load("game/button.png")
             btn_surface=pygame.transform.scale(btn_surface,(290,94))
+            # creating buttons
             play_button=Buttons(image=btn_surface,position=(301,270),text="PLAY",colour="white")
             tutorial_button=Buttons(image=btn_surface,position=(301,390),text="TUTORIAL",colour="white")
             settings_button=Buttons(image=btn_surface,position=(301,510),text="SETTINGS",colour="white")
@@ -738,14 +677,14 @@ class Game:
             info_surface=pygame.transform.scale(info_surface,(167,55))
             info=Buttons(image=info_surface,position=(91,570),text="info",colour="white")
 
-            for button in [play_button,tutorial_button,settings_button,info]:
+            for button in [play_button,tutorial_button,settings_button,info]: # drawing buttons + hover colour change
                 button.change_colour(mouse_pos)
                 button.draw_button(self.board.screen)
             
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     sys.exit()
-                if event.type==pygame.MOUSEBUTTONDOWN:
+                if event.type==pygame.MOUSEBUTTONDOWN: # button actions
 
                     for button in [info,tutorial_button,settings_button]:
                         if button.button_clicked(mouse_pos) and self.sfx_on:
@@ -766,7 +705,7 @@ class Game:
             self.board.display_window()
             
 
-    def info(self):
+    def info(self): # information page
         pygame.display.set_caption("Statistics")
         self.play_music()
         if self.light:
@@ -819,8 +758,7 @@ class Game:
             
             self.board.display_window()
     
-    def running(self):
-        #self.board.render_ultimate()
+    def running(self): # actual game for ultimate version
         self.board=Board(dims=self.dims,ultimate=True)
         pygame.display.set_caption("Play")
         self.stop_music()
@@ -832,7 +770,7 @@ class Game:
                 
                 if event.type==pygame.MOUSEBUTTONDOWN and not self.game_over:
                     pos=event.pos
-                    if self.board.ultvalidate(pos[0],pos[1]):
+                    if self.board.ultvalidate(pos[0],pos[1]): # if move received from input is valid
                         self.board.marksquare(pos[0],pos[1],self.player)
                         if self.sfx_on:
                             self.piececlick.play()
@@ -840,24 +778,24 @@ class Game:
                         if self.board.ult_final_state()=="small board": # win detected on smaller board
                             if self.sfx_on:
                                 self.ult_sfx.play()
-                        self.board.ult_final_state()
+                        self.board.ult_final_state() # final state check
                         if self.check_win(self.player): #win detected on larger board
                             self.game_over=True
                             pygame.mixer.stop()
                             self.win_page_sfx(self.player)
-                            if self.gamemode!="ai":
+                            if self.gamemode!="ai": # update multiplayer stats
                                 if self.player==1:
                                     self.p1wins+=1
                                 if self.player==2:
                                     self.p2wins+=1
 
-                            if self.gamemode=="ai":
+                            if self.gamemode=="ai": # update singleplayer stats
                                 if self.player==1:
                                     self.wins+=1
                                 if self.player==self.aiplayer.player:
                                     self.losses+=1
 
-                        if self.game_over or self.board.markedsquares==9:
+                        if self.game_over or self.board.markedsquares==9: # end state deetcted
                             self.total+=1
                             self.win_page_sfx(self.player)
                         if self.game_over==False:
@@ -873,13 +811,13 @@ class Game:
                         else:
                             self.multiplayer() # go to multiplayer page if ult is pvp
                     
-                    if event.key==pygame.K_h:
+                    if event.key==pygame.K_h: # home button clicked, go back to main menu
                         if self.winline!=None or self.board.markedsquares==9:
                             self.ult_restart()
                             self.main_menu()
 
 
-            if self.gamemode=='ai' and self.player==self.aiplayer.player and not self.game_over:
+            if self.gamemode=='ai' and self.player==self.aiplayer.player and not self.game_over: # ai player
                 if not self.aithinking:
                     self.aithinking=True
                     self.aitimer=pygame.time.get_ticks()
@@ -912,16 +850,12 @@ class Game:
                                 self.switch_turns()
                         self.aithinking=False
                 
-            
-                #if event.type==pygame.KEYDOWN: # reset board when key is clicked
-                 #   if event.key==pygame.K_r: # key r clicked- reset
-                 #       self.restart()
-            
             self.board.screen.fill(BG_COLOUR)
             self.board.render_ultimate(self.board.screen)
             self.board.place_ultpiece(self.piece1,self.piece2)
             self.draw_winning()
             self.win_page()
             self.board.display_window()
+
 
 
