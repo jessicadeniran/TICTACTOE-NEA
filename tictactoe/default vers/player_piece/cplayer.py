@@ -15,5 +15,4 @@ class Player:
         self.piece=Piece(symbol,colour)
         return self.piece # returns the player's piece based on their number
         
-    #def add_score():
 
